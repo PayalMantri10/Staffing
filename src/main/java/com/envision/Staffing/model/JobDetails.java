@@ -22,7 +22,7 @@ import com.envision.Staffing.converter.DoubleArrayToStringConverter;
 import com.envision.Staffing.converter.IntegerArrayToStringConverter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity 
+@Entity
 @Table(name = "job_details")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JobDetails implements Serializable {
@@ -36,13 +36,13 @@ public class JobDetails implements Serializable {
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
 	private String id;
-	
+
 	@Column(name = "email_id")
 	private String outputEmailId;
-	
+
 	@Column(name = "status")
 	private String status;
-	
+
 	public String getOutputEmailId() {
 		return outputEmailId;
 	}
@@ -58,7 +58,6 @@ public class JobDetails implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
 	@Column(name = "user_id")
 	private String userId;
 
@@ -80,10 +79,42 @@ public class JobDetails implements Serializable {
 
 	@Column(name = "input_format")
 	private String inputFormat;
-	
+
 	@Column(name = "cron_expression")
 	private String cronExpression;
 
+	@Column(name = "not_allocated_start_time")
+	private Integer notAllocatedStartTime;
+
+	@Column(name = "not_allocated_end_time")
+	private Integer notAllocatedEndTime;
+
+	@Column(name = "patient_hour_wait")
+	private Integer patientHourWait;
+
+	public Integer getNotAllocatedStartTime() {
+		return notAllocatedStartTime;
+	}
+
+	public void setNotAllocatedStartTime(Integer notAllocatedStartTime) {
+		this.notAllocatedStartTime = notAllocatedStartTime;
+	}
+
+	public Integer getNotAllocatedEndTime() {
+		return notAllocatedEndTime;
+	}
+
+	public void setNotAllocatedEndTime(Integer notAllocatedEndTime) {
+		this.notAllocatedEndTime = notAllocatedEndTime;
+	}
+
+	public Integer getPatientHourWait() {
+		return patientHourWait;
+	}
+
+	public void setPatientHourWait(Integer patientHourWait) {
+		this.patientHourWait = patientHourWait;
+	}
 	@OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name = "input_ftp_id")
 	private FtpDetails inputFtpDetails;

@@ -2,6 +2,7 @@ package com.envision.Staffing.controllers;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -19,16 +20,17 @@ import com.envision.Staffing.services.JobListService;
 @Controller
 @RequestMapping(path = "/jobList")
 public class JobListController {
-	
+
 	@Autowired
 	private JobListService jobListService;
+	Logger log = Logger.getLogger(JobListController.class);
 
-	@PostMapping(path= "/delete")
+	@PostMapping(path = "/delete")
 	@ResponseBody
 	public Response deleteJob(@RequestBody String jobId) throws IOException {
-			
-		jobListService.deleteJobById(jobId);	
-		
+		log.info("Entered with endpoint /delete in joblist");
+		jobListService.deleteJobById(jobId);
+
 		Response response = new Response();
 		response.setMessage("Deleted");
 		return response;

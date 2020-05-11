@@ -27,17 +27,17 @@ pipeline {
 	   
 	   
 	   
-        stage('Test') {
-            steps {
-                sh 'mvn test -P prod'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml';
-                }
-            }
+         stage('Test') {
+             steps {
+                 sh 'mvn test -P prod'
+             }
+             post {
+                 always {
+                     junit 'target/surefire-reports/*.xml';
+                 }
+             }
          
-         }
+          }
 	   
 	     stage('Building image') {
       steps{

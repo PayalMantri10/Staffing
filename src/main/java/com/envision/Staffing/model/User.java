@@ -31,10 +31,21 @@ public class User {
 
 	private String email;
 
-	public User(String name, Set<String> roles) {
+	private String password;
+
+	public User(String name, Set<String> roles, String password) {
 		super();
 		this.name = name;
 		this.roles = roles;
+		this.password = password;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getId() {

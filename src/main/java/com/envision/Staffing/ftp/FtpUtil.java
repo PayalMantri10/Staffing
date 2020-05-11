@@ -1,24 +1,26 @@
 package com.envision.Staffing.ftp;
 
-import com.envision.Staffing.model.FtpDetails;
-import com.envision.Staffing.model.Output;
-
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.log4j.Logger;
+
+import com.envision.Staffing.model.FtpDetails;
 
 public class FtpUtil {
+	static Logger log = Logger.getLogger(FtpUtil.class);
 
 	public static FtpDetails fieldExtraction(FtpDetails ftpDetails) {
 
-		String ftpUrl = ftpDetails.getFileUrl();	
-		
+		String ftpUrl = ftpDetails.getFileUrl();
+
 		// Host Name
 		Pattern hostPattern = Pattern.compile("(ftp|sftp)://[^/]*/");
 		Matcher hostMatcher = hostPattern.matcher(ftpUrl);
@@ -35,15 +37,15 @@ public class FtpUtil {
 		if (dirMatcher.find()) {
 			ftpDetails.setDirPath(dirMatcher.group(0));
 		}
-		
-		// File Name 
+
+		// File Name
 		Pattern fileNamePattern = Pattern.compile("[/][^/:.]+[.][^:/.0-9]+");
 		Matcher fileMatcher = fileNamePattern.matcher(ftpUrl);
 		while (fileMatcher.find()) {
 			ftpDetails.setFileName(fileMatcher.group(0));
 		}
 		ftpDetails.setFileName(ftpDetails.getFileName().substring(1));
-			
+
 		return ftpDetails;
 	}
 
@@ -68,6 +70,7 @@ public class FtpUtil {
 				ftp.disconnect();
 			}
 		} catch (IOException e) {
+			log.error("Error happened in FTP client connect method :", e);
 			e.printStackTrace();
 		}
 
@@ -76,49 +79,51 @@ public class FtpUtil {
 
 	public static InputStream downloadFile(FtpDetails ftpDetails) {
 		ftpDetails = FtpUtil.fieldExtraction(ftpDetails);
-		
+
 		String dirPath = ftpDetails.getDirPath();
 		String fileName = ftpDetails.getFileName();
 		FTPClient ftp = connect(ftpDetails);
-		
+
 		InputStream in = null;
 		if (ftp.isConnected()) {
 			try {
 				in = ftp.retrieveFileStream(dirPath + fileName);
-//				System.out.println("FTP File downloaded successfully");
-				
+				log.info("FTP File Downloaded ");
 				if (ftp.isConnected()) {
 					ftp.logout();
 					ftp.disconnect();
 				}
 			} catch (Exception e) {
+				log.error("Error happened in downloading file method :", e);
 				e.printStackTrace();
 			}
 		}
 		return in;
 	}
 
-	public static boolean uploadFile(FtpDetails ftpDetails, String jsonString) {
+	public static boolean uploadFile(FtpDetails ftpDetails) {
 		ftpDetails = FtpUtil.fieldExtraction(ftpDetails);
-		
+
 		String remoteDirPath = ftpDetails.getDirPath();
 		String remoteFileName = ftpDetails.getFileName();
-		
+		String remoteFilePath = remoteDirPath + remoteFileName;
 		boolean flag = false;
 
 		FTPClient ftp = connect(ftpDetails);
-		if (ftp.isConnected()) {
-			try {				
-				
-				ObjectOutputStream oos = new ObjectOutputStream(ftp.storeFileStream(remoteDirPath + remoteFileName));
-				oos.writeBytes(jsonString);
-				
-				oos.close();
-				flag = true;
 
+		if (ftp.isConnected()) {
+			try {
+				File localFile = new File("localOutput.xlsx");
+				InputStream inputStream = new FileInputStream(localFile);
+				boolean done = ftp.storeFile(remoteFilePath, inputStream);
+				inputStream.close();
+				if (done) {
+					flag = true;
+				}
 				ftp.logout();
 				ftp.disconnect();
 			} catch (IOException e) {
+				log.error("Error happened in uploading file method :", e);
 				e.printStackTrace();
 			}
 		}

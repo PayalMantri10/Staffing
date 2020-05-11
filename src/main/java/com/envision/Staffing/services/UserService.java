@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,10 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
+	Logger log = Logger.getLogger(UserService.class);
+
 	public List<User> getAllUsers() {
+		log.info("Entering the method for getAllUsers");
 		List<User> userList = (List<User>) userRepository.findAll();
 
 		if (userList.size() > 0) {
@@ -27,6 +31,7 @@ public class UserService {
 	}
 
 	public User getUserById(String id) {
+		log.info("Entering the method for get User by Id");
 		Optional<User> user = userRepository.findById(id);
 
 		if (user.isPresent()) {
@@ -38,6 +43,7 @@ public class UserService {
 	}
 
 	public User createOrUpdateUser(User entity) {
+		log.info("Entering the method for create or update the user");
 		Optional<User> user = userRepository.findById(entity.getId());
 
 		if (user.isPresent()) {

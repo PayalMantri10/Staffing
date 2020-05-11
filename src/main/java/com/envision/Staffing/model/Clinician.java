@@ -15,6 +15,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.envision.Staffing.converter.DoubleArrayToStringConverter;
 import com.envision.Staffing.converter.StringListConverter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 //Model to hold data about a clinician
@@ -58,6 +59,7 @@ public class Clinician implements Comparable<Clinician>, Serializable {
 	
 	@Column(name = "expressions")
 	@Convert(converter = StringListConverter.class)
+	@JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
 	private  List<String> expressions; // expressions to handle the relationships between clinicians
 
 	// constructor
